@@ -1,0 +1,38 @@
+{
+   
+    "compilerOptions": {
+      "outDir": "dist",
+      "rootDir": ".",
+      "composite": true,
+      "pretty": true,
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "target": "ES6",
+      "noEmitOnError": true,
+  
+      "strictNullChecks": true,
+      "noImplicitAny": true,
+      "noImplicitThis": true,
+      "strictPropertyInitialization": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+  
+      "skipLibCheck": true,
+  
+      "alwaysStrict": true,
+      "preserveConstEnums": true,
+      "newLine": "lf",
+  
+      "module": "commonjs",
+      "strict": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+    },
+    "reflection": true,
+    "exclude": ["**/dist", "**/node_modules", "**/__tests__"]
+  }
+  
