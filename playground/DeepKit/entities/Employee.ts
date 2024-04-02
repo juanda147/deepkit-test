@@ -6,4 +6,8 @@ export class Employee {
             this.Name = name;
             this.Code = code;
     }
+
+    greet() {
+        return `Hello, my name is ${this.Name}`;
+    }
 }

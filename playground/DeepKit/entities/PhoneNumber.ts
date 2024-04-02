@@ -8,6 +8,7 @@ export class PhoneNumber extends ValueObject<PhoneNumber> {
   constructor(private readonly parsedNumber: libphonenumber.PhoneNumber) {
     super()
   }
+  
   public static get validRegions(): Array<string> {
     return ['US', 'CO', 'RO'];
   }
