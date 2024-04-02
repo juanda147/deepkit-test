@@ -1,14 +1,26 @@
 import * as libphonenumber from 'google-libphonenumber';
 import { ValueObject } from '../abstractions/ValueObject';
 import { Result } from '../abstractions/Result';
+import { serializer } from '@deepkit/type';
+
+// we have to define our own type alias where runtime types are enabled and then use this type everywhere
+class GooglePhone extends libphonenumber.PhoneNumber {}
+
+serializer.serializeRegistry.registerClass(GooglePhone, (_, state) => {
+    state.addSetter(`${state.accessor}`);
+});
+
+serializer.deserializeRegistry.registerClass(GooglePhone, (_, state) => {
+    state.addSetter(state.accessor);
+});
 
 export class PhoneNumber extends ValueObject<PhoneNumber> {
   private readonly phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
 
-  constructor(private readonly parsedNumber: libphonenumber.PhoneNumber) {
-    super()
+  constructor(private readonly parsedNumber: GooglePhone) {
+    super()    
   }
-  
+
   public static get validRegions(): Array<string> {
     return ['US', 'CO', 'RO'];
   }
@@ -53,7 +65,7 @@ export class PhoneNumber extends ValueObject<PhoneNumber> {
     phoneNumber: string,
     phoneUtil: libphonenumber.PhoneNumberUtil,
   ): libphonenumber.PhoneNumber {
-    let parsedNumber = new libphonenumber.PhoneNumber();
+    let parsedNumber = new GooglePhone();
     try {
       for (const region of PhoneNumber.validRegions) {
         parsedNumber = phoneUtil.parse(phoneNumber, region);
@@ -64,7 +76,7 @@ export class PhoneNumber extends ValueObject<PhoneNumber> {
           break;
       }
     } catch {
-      return new libphonenumber.PhoneNumber();
+      return new GooglePhone();
     }
     return parsedNumber;
   };

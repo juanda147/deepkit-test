@@ -15,3 +15,5 @@ console.log(plainObjectPhoneNumber);
 
 const classInstancePhoneNumber = deserialize<PhoneNumber>(plainObjectPhoneNumber);
 console.log(classInstancePhoneNumber.formatPhoneNumberAsE164);
+console.log(classInstancePhoneNumber.couldBeMobile);
+console.log(classInstancePhoneNumber.formatPhoneNumberAsNational);
