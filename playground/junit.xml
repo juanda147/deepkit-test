@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="1" failures="1" errors="0" time="2.571">
+  <testsuite name="given a serialized PhoneNumber" errors="0" failures="1" skipped="0" timestamp="2024-04-02T19:21:46" time="2.09" tests="1">
+    <testcase classname="given a serialized PhoneNumber when the PhoneNumber class is deserialized Then the class get methods functions as expected" name="given a serialized PhoneNumber when the PhoneNumber class is deserialized Then the class get methods functions as expected" time="0.001">
+      <failure>TypeError: Cannot read properties of undefined (reading &apos;getNationalNumber&apos;)
+    at i18n.phonenumbers.PhoneNumberUtil.format (C:\Curbit\deepkit-test\playground\node_modules\google-libphonenumber\dist\libphonenumber.js:935:74)
+    at PhoneNumber.get formatPhoneNumberAsE164 [as formatPhoneNumberAsE164] (C:\Curbit\deepkit-test\playground\DeepKit\entities\PhoneNumber.ts:48:27)
+    at Object.&lt;anonymous&gt; (C:\Curbit\deepkit-test\playground\DeepKit\Playground.test.ts:12:48)
+    at Promise.then.completed (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async _runTest (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\run.js:252:3)
+    at async _runTestsForDescribeBlock (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\run.js:126:9)
+    at async _runTestsForDescribeBlock (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\run.js:121:9)
+    at async _runTestsForDescribeBlock (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\run.js:121:9)
+    at async run (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\run.js:71:3)
+    at async runAndTransformResultsToJestFormat (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at async jestAdapter (C:\Curbit\deepkit-test\playground\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at async runTestInternal (C:\Curbit\deepkit-test\playground\node_modules\jest-runner\build\runTest.js:367:16)
+    at async runTest (C:\Curbit\deepkit-test\playground\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

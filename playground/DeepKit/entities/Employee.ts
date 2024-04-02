@@ -1,9 +1,9 @@
 export class Employee {
-    empCode: number;
-    empName: string;
+    Code: number;
+    Name: string;
 
     constructor(code: number, name: string) {
-            this.empName = name;
-            this.empCode = code;
+            this.Name = name;
+            this.Code = code;
     }
 }

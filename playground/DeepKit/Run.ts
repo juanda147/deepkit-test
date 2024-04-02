@@ -6,4 +6,4 @@ const serializedEmployee = serialize<Employee>(employee);
 const deSerializedEmployee = deserialize<Employee>(serializedEmployee);
 
 console.log(serializedEmployee);
-console.log(deSerializedEmployee.empCode);
+console.log(deSerializedEmployee);
