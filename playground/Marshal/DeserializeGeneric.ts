@@ -15,8 +15,6 @@ class TestSource extends SourceIdentity{
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const testDeserialized = <S extends ISourceIdentity>(payload: Record<string, unknown>, type: new (...args: any ) => S) => {
-    //const CustomType = type as new (...args: any) => S;
-
     const resultMarshal = plainToClass(type, payload);
     const resultDeepkit = deserialize<typeof type>(payload); // Correct type?
     console.log("Marshal result:" + resultMarshal);
