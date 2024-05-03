@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install": "deepkit-type-install",
     "build": "tsc -b --verbose && npm run"
   },
   "author": "",
