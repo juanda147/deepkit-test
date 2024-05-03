@@ -1,98 +1,10 @@
+import 'reflect-metadata';
 import { deserialize, resolveReceiveType,  } from "@deepkit/type";
 import { ClassType } from '@deepkit/core';
-
-type IUniqueIdentity = Record<string, string | undefined>;
-
-interface ISourceIdentity {
-  identity: IUniqueIdentity;
-  typeName: string;
-}
-
-export interface INormalized {
-  normalizedAt: Date;
-}
-
-abstract class SourceIdentity implements ISourceIdentity {
-  public readonly typeName: string;
-  constructor() {
-    this.typeName = this.constructor.name;
-  }
-
-  public get identity(): IUniqueIdentity {
-    return {};
-  }
-
-  public toJSON(): unknown {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const clone: any = Object.assign({}, this);
-
-    //save the identity when we serialize
-    clone.identity = this.identity;
-
-    //toJSON requires that we return an object
-    return clone;
-  }
-}
-
-
-abstract class PosOrderIdentifier extends SourceIdentity {
-  constructor(readonly checkId: string, readonly storeId: string) {
-    super();
-  }
-
-  public get identity(): IUniqueIdentity {
-    return {
-      checkId: this.checkId,
-      storeId: this.storeId,
-    };
-  }
-}
-
-class PosUser {
-  constructor(public readonly phoneNumber: string, public readonly firstName: string) {}
-}
-
-class PosOrder extends PosOrderIdentifier {
-  constructor(
-    public readonly storeId: string,
-    public readonly checkNumber: string,
-    public readonly checkId: string,
-    public readonly guestLocator: string,
-    public readonly checkNumberWithDate: string,
-    public readonly originOrderId: string,
-    public readonly placedAt: Date,
-    public readonly openedAt: Date,
-    public readonly startedAt: Date,
-    public readonly origin: string,
-    public readonly handoffMethod: string,
-    public readonly customerType: string,
-    public readonly orderType: string,
-    public readonly enteredByEmployee: string,
-    public readonly grandTotal: number,
-    public readonly subTotal: number,
-    public readonly taxTotal: number,
-    public readonly paymentTotal: number,
-    public readonly serviceTotal: number,
-    public readonly paymentStatus: string,
-    public readonly tableNumber?: string,
-    public readonly closedAt?: Date,
-    public readonly promiseAt?: Date,
-    public readonly preparedAt?: Date,
-    public readonly readyAt?: Date,
-    public readonly guest?: PosUser,
-    public readonly originProvider?: string,
-    public readonly wantedAt?: Date,
-  ) {
-    super(checkId, storeId);
-  }
-}
-
-class PosOrderNormalized implements INormalized {
-  constructor(public normalizedAt: Date,
-    public readonly storeId: string,
-    public readonly id: string,
-  ) {}
-}
+import { BrinkStore } from "./Types/BrinkStore";
+import { INormalized, ISourceIdentity } from "./Types/SourceIdentity";
+import { PosOrder, PosOrderNormalized } from "./Types/PosOrder";
+import { plainToClass } from "@marcj/marshal";
 
 const sourcePayload = {
   storeId: '3407',
@@ -125,7 +37,7 @@ const destinationPayload = {
 class Output<S extends ISourceIdentity, N extends INormalized> {
   constructor(
     public source: S,
-    public destination: N
+    public destination?: N
   ) {    
   }
 }
@@ -133,11 +45,15 @@ class Output<S extends ISourceIdentity, N extends INormalized> {
 const deserializeSource = <S extends ISourceIdentity, N extends INormalized>(
   sourcePayload: Record<string, unknown>, 
   sourceType: ClassType<S>,
-  destinationPayload: Record<string, unknown>, 
-  destinationType: ClassType<N>,
+  destinationPayload?: Record<string, unknown>, 
+  destinationType?: ClassType<N>,
 ): Output<S, N> => {    
   const source = deserialize<S>(sourcePayload, undefined, undefined, undefined, resolveReceiveType(sourceType));
-  const destination = deserialize<N>(destinationPayload, undefined, undefined, undefined, resolveReceiveType(destinationType));
+  
+  let destination = undefined;
+  if (destinationPayload) 
+    destination = deserialize<N>(destinationPayload, undefined, undefined, undefined, resolveReceiveType(destinationType));  
+  
   return new Output(source, destination);
 };
 
@@ -148,7 +64,141 @@ console.log(output.source.guest?.firstName);
 console.log(output.source.guest?.phoneNumber);
 console.log(output.source.identity);
 console.log("Destination:-----------------------------");
-console.log(output.destination.normalizedAt);
-console.log(output.destination.storeId);
-console.log(output.destination.id);
+console.log(output.destination?.normalizedAt);
+console.log(output.destination?.storeId);
+console.log(output.destination?.id);
 
+const brinkPayload = {
+  id: '11520666765314',
+  number:  '2',
+  customerId: '84e963cd-5afb-448f-a452-1e6b02b57f55',
+  idEncoded: 'AAALRKQWACAC',
+  businessDate: '2022-04-05T00:00:00',
+  closedTime: '0001-01-01T00:00:00Z',
+  openedTime:  '2022-04-05T14:44:55Z',
+  modifiedTime: '2022-04-05T14:44:55Z',
+  pickupTime:  '2022-04-05T14:54:55.000Z' ,
+  isFutureOrder: 'false',
+  netSales: '25.85',
+  subTotal: '25.85',
+  total: '27.79',
+  tax: '1.94',
+  grossSales: '27.79',
+  entries: [
+    {
+      id: '1',
+      itemId: '204327',
+      description: 'BBQ Chicken',
+      price: '8.95',
+      grossSales: '9.62',
+      ItemGrossSales: '9.62',
+      itemNetSales: '8.95',
+      netSales: '8.95',
+      note: {
+        $: {
+          'i:nil': 'true',
+        },
+      },
+      modifiers: [],
+    },
+    {
+      id: '2',
+      itemId: '204329',
+      description: 'White Blanco',
+      price: '7.95',
+      grossSales: '8.55',
+      ItemGrossSales: '8.55',
+      itemNetSales: '7.95',
+      netSales: '7.95',
+      note: {
+        $: {
+          'i:nil': 'true',
+        },
+      },
+      modifiers: [],
+    },
+    {
+      id: '3',
+      itemId: '1',
+      description: 'Meat Eater',
+      price: '8.95',
+      grossSales: '9.62',
+      ItemGrossSales: '9.62',
+      itemNetSales: '8.95',
+      netSales: '8.95',
+      note: {
+        $: {
+          'i:nil': 'true',
+        },
+      },
+      modifiers: [],
+    },
+  ],
+  destinationId:'1',
+  payments: [],
+  discounts: [],
+  customer: {
+    id: '84e963cd-5afb-448f-a452-1e6b02b57f55',
+    firstName: 'Ruben',
+    lastName: 'Murillo',
+    phoneNumber: '4152347650',
+  },
+  store: {
+    id: 'MFuDJthYWUava2Om9dgtbw==',
+    name: '* Darrin Heisey',
+    latitude: '33.025114',
+    longitude: '-117.082445',
+    address1: '12154 Fairfax Towne Center',
+    city: 'Fairfax',
+    state: 'VA',
+    zipCode: '22033',
+    phone: '(703) 352-6226',
+    domainId: 'store-domain-id',
+    destinations: [
+      {
+        id: '1',
+        name: 'For Here',
+      },
+      {
+        id: '2',
+        name: 'Take Out',
+      },
+      {
+        id: '3',
+        name: 'Pickup',
+      },
+      {
+        id: '4',
+        name: 'Delivery',
+      },
+      {
+        id: '640287045',
+        name: 'Uber Eats',
+      },
+    ],
+    url: 'https://api8.brinkpos.net/',
+  },
+  identity: {
+    id: '11520666765314',
+    businessDate: '2022-04-05T00:00:00',
+    locationToken: 'MFuDJthYWUava2Om9dgtbw==',
+  },
+};
+
+const brinkPayloadDeserialized = deserializeSource(brinkPayload, BrinkStore).source;
+console.log("Brink Store with deepkit:----------------------------------");
+console.log(brinkPayloadDeserialized.identity);
+console.log(brinkPayloadDeserialized.name);
+console.log(brinkPayloadDeserialized.id);
+console.log(brinkPayloadDeserialized.store?.address1);
+console.log(brinkPayloadDeserialized.store?.id);
+console.log(brinkPayloadDeserialized.store?.name);
+
+const brinkPayloadDeserializedWithMarshal = plainToClass(BrinkStore, brinkPayload);
+console.log("Brink Store with marshal:----------------------------------");
+console.log(brinkPayloadDeserializedWithMarshal.identity);
+console.log(brinkPayloadDeserializedWithMarshal.name);
+console.log(brinkPayloadDeserializedWithMarshal.id);
+console.log(brinkPayloadDeserializedWithMarshal.store?.address1);
+console.log(brinkPayloadDeserializedWithMarshal.store?.id);
+console.log(brinkPayloadDeserializedWithMarshal.store?.name);
