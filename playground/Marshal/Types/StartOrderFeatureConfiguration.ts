@@ -1,18 +1,19 @@
+import { f } from '@marcj/marshal';
 import { StoreFeatureBase } from './StoreFeatureBase';
 
 export class StartOrderFeatureOriginSettings {
-  constructor(public name: string, public handoffLocations?: Array<string>) {}
+  constructor(@f public name: string, @f.array(String).optional() public handoffLocations?: Array<string>) {}
 }
 
 export class StartOrderFeatureConfiguration {
   constructor(
-    public origin?: Array<StartOrderFeatureOriginSettings>,
-    public handoffLocations?: Array<string>,
+    @f.array(StartOrderFeatureOriginSettings).optional() public origin?: Array<StartOrderFeatureOriginSettings>,
+    @f.array(String).optional() public handoffLocations?: Array<string>,
   ) {}
 }
 
 export class StartOrderInProviderFeature extends StoreFeatureBase {
-  configuration?: StartOrderFeatureConfiguration;
+  @f.optional() configuration?: StartOrderFeatureConfiguration;
 
   static get Gql(): string {
     return `

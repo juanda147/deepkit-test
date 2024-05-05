@@ -8,7 +8,8 @@ export abstract class GqlFeatureBase {
   
   export class StoreFeatureBase extends GqlFeatureBase {
     @f.type(String) protected storeName = '';
-    @f.type(Boolean) protected isEnabled = false;
+    // @f.type(Boolean) protected isEnabled : boolean = false; // works with boolean type
+    @f.type(Boolean) protected isEnabled  = false; // does not work with boolean type
   
     /**
      * Internal use only to set the store name to be able to know whether is a lab store or not.

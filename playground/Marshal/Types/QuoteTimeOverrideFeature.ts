@@ -1,14 +1,15 @@
+import { f } from '@marcj/marshal';
 import { StoreFeatureBase } from './StoreFeatureBase';
 
 export class QuoteTimeOverrideConfiguration {
-  effectiveDurationInMinutes!: number;
-  targetPercentileOfDurationUntilReady!: number;
-  minimumDurationUntilReadyInSeconds!: number;
-  maximumDurationUntilReadyInSeconds!: number;
+  @f effectiveDurationInMinutes!: number;
+  @f targetPercentileOfDurationUntilReady!: number;
+  @f minimumDurationUntilReadyInSeconds!: number;
+  @f maximumDurationUntilReadyInSeconds!: number;
 }
 
 export class QuoteTimeOverrideFeature extends StoreFeatureBase {
-  configuration!: QuoteTimeOverrideConfiguration;
+  @f.optional() configuration!: QuoteTimeOverrideConfiguration;
 
   static get Gql(): string {
     return `
