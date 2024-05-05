@@ -6,6 +6,7 @@ import { INormalized, ISourceIdentity } from "./Types/SourceIdentity";
 import { PosOrder, PosOrderNormalized } from "./Types/PosOrder";
 import { plainToClass } from "@marcj/marshal";
 import { StoreContext } from './Types/StoreContext';
+import { QsrVehicle } from './Types/QsrVehicle';
 
 const sourcePayload = {
   storeId: '3407',
@@ -247,3 +248,122 @@ console.log(storeContextDeserializedWithMarshal.longitude);
 console.log(storeContextDeserializedWithMarshal.features?.synchProviderWithQuoteTime?.configuration?.effectiveDurationInMinutes);
 console.log(storeContextDeserializedWithMarshal.features?.synchProviderWithQuoteTime?.isEnable());
 console.log(storeContextDeserializedWithMarshal.features?.synchProviderWithOriginPromiseTime?.isEnable());
+
+const qsrPayload = {
+  SiteUID: 'b453462e-80fe-4722-bf82-b4eb2becd99f',
+  Guest: {
+    FirstName: 'Geo',
+    LastName: 'Alzate',
+    Email: null,
+    Notes: null,
+    FoodAllergies: null,
+    NotificationType: 'SMS',
+    PhoneNumbers: [
+      {
+        PhoneNumberString: '+18053720119',
+        PhoneNumber: 18053720119,
+        Sort: 1,
+        Type: 'Mobile',
+      },
+      {
+        PhoneNumberString: '+57603291912',
+        PhoneNumber: 57603291912,
+        Sort: 2,
+        Type: 'Whatever',
+      },
+    ],
+    Addresses: [],
+    CustomValues: [],
+    IsAnonymous: false,
+    IsSubscribedToEmailMarketing: false,
+    IsSubscribedToQsrMarketing: false,
+    IsSubscribedToSmsMarketing: false,
+    Loyalty: null,
+  },
+  Vehicle: {
+    Make: 'Ford',
+    Model: 'Explorer',
+    Color: 'White',
+  },
+  Courses: [
+    {
+      LastUpdateTime: '2021-08-18T12:15:22.955-07:00',
+      CourseType: 'Entree',
+      CourseStartTime: '2021-08-18T19:15:18.269+00:00',
+      PosCourseNumbers: [0],
+      QuoteTime: 480,
+      ConfiguredQuote: {
+        QuoteLabel: '5-10 min',
+        ExactQuoteLabel: '10 minutes',
+        PrintQuoteLabel: 'About 10 minutes',
+        ExactQuoteMinutes: 10,
+        MinMinutes: 6,
+        MaxMinutes: 10,
+      },
+      DestinationType: 'CarryOut',
+      DestinationName: 'Olo',
+      Zones: [],
+      EstimatedCompletionTime: '2021-08-18T19:23:18.269+00:00',
+      IsVoid: false,
+      KitchenStatus: {
+        Status: 'Active',
+        PreparationTime: 480,
+        TimeStatus: 'Normal',
+      },
+      CourseName: '',
+      CourseNumber: 1,
+      CustomerName: 'Michael Leek',
+      DestinationID: 40,
+      GuestCount: 0,
+      PagerID: 0,
+      PaymentStates: [
+        {
+          Change: 0,
+          PaymentState: 'Tendered',
+          SubTotal: 25.5,
+          Tax: 2.61,
+          Tender: 0,
+          Total: 28.11,
+        },
+      ],
+      Server: {
+        ID: 990,
+        Name: 'Web',
+      },
+      TableName: '0',
+      TableSection: '',
+      TentNumber: 0,
+      Terminal: 99,
+      IsTraining: false,
+      Comment: '',
+    },
+  ],
+  CheckNumber: 30136,
+  IsHeld: false,
+};
+
+const qsrPayloadDeserialized = deserializeSource(qsrPayload, QsrVehicle).source;
+console.log("Qsr Vehicle with deepkit:----------------------------------");
+console.log(qsrPayloadDeserialized.identity);
+console.log(qsrPayloadDeserialized.PhoneNumber);
+console.log(qsrPayloadDeserialized.SiteUID);
+console.log(qsrPayloadDeserialized.CheckNumber);
+console.log(qsrPayloadDeserialized.Vehicle?.Make);
+console.log(qsrPayloadDeserialized.Vehicle?.Model);
+console.log(qsrPayloadDeserialized.Vehicle?.Color);
+console.log(qsrPayloadDeserialized.Guest?.FirstName);
+console.log(qsrPayloadDeserialized.Guest?.LastName);
+console.log(qsrPayloadDeserialized.Guest?.getMobileNumber());
+
+const qsrPayloadDeserializedWithMarshal = plainToClass(QsrVehicle, qsrPayload);
+console.log("Qsr Vehicle with marshal:----------------------------------");
+console.log(qsrPayloadDeserializedWithMarshal.identity);
+console.log(qsrPayloadDeserializedWithMarshal.PhoneNumber);
+console.log(qsrPayloadDeserializedWithMarshal.SiteUID);
+console.log(qsrPayloadDeserializedWithMarshal.CheckNumber);
+console.log(qsrPayloadDeserializedWithMarshal.Vehicle?.Make);
+console.log(qsrPayloadDeserializedWithMarshal.Vehicle?.Model);
+console.log(qsrPayloadDeserializedWithMarshal.Vehicle?.Color);
+console.log(qsrPayloadDeserializedWithMarshal.Guest?.FirstName);
+console.log(qsrPayloadDeserializedWithMarshal.Guest?.LastName);
+console.log(qsrPayloadDeserializedWithMarshal.Guest?.getMobileNumber());
