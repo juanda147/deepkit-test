@@ -1,10 +1,11 @@
 import 'reflect-metadata';
-import { deserialize, resolveReceiveType,  } from "@deepkit/type";
+import { deserialize, resolveReceiveType } from "@deepkit/type";
 import { ClassType } from '@deepkit/core';
 import { BrinkStore } from "./Types/BrinkStore";
 import { INormalized, ISourceIdentity } from "./Types/SourceIdentity";
 import { PosOrder, PosOrderNormalized } from "./Types/PosOrder";
 import { plainToClass } from "@marcj/marshal";
+import { StoreContext } from './Types/StoreContext';
 
 const sourcePayload = {
   storeId: '3407',
@@ -53,7 +54,7 @@ const deserializeSource = <S extends ISourceIdentity, N extends INormalized>(
   let destination = undefined;
   if (destinationPayload) 
     destination = deserialize<N>(destinationPayload, undefined, undefined, undefined, resolveReceiveType(destinationType));  
-  
+
   return new Output(source, destination);
 };
 
@@ -202,3 +203,47 @@ console.log(brinkPayloadDeserializedWithMarshal.id);
 console.log(brinkPayloadDeserializedWithMarshal.store?.address1);
 console.log(brinkPayloadDeserializedWithMarshal.store?.id);
 console.log(brinkPayloadDeserializedWithMarshal.store?.name);
+
+const storeContextPayload = {
+  id: '123',
+  timezone: 'America/Los_Angeles',
+  name: "Sharky's",
+  phoneNumber: '+18053221441',
+  apiId: 'ChIJh1J1c41J6IAREvLzEHdSHBY',
+  longitude: -119.0718039,
+  latitude: 34.2163531,
+  features: {
+    quoteTimeOverride: {
+      configuration: {
+        effectiveDurationInMinutes: 10,
+        targetPercentileOfDurationUntilReady: 0.95,
+        minimumDurationUntilReadyInSeconds: 300,
+        maximumDurationUntilReadyInSeconds: 900,
+      },
+      isEnabled: true,
+    },
+    updateProviderPromiseTimeWithGuestPromiseTime: {
+      isEnabled: true,
+    },
+  },
+};
+
+const storeContextDeserialzed = deserialize<StoreContext>(storeContextPayload);
+console.log("Store Context with deepkit::----------------------------------");
+console.log(storeContextDeserialzed.id);
+console.log(storeContextDeserialzed.name);
+console.log(storeContextDeserialzed.phoneNumber);
+console.log(storeContextDeserialzed.longitude);
+console.log(storeContextDeserialzed.features?.synchProviderWithQuoteTime?.configuration?.effectiveDurationInMinutes);
+console.log(storeContextDeserialzed.features?.synchProviderWithQuoteTime?.isEnable());
+console.log(storeContextDeserialzed.features?.synchProviderWithOriginPromiseTime?.isEnable());
+
+const storeContextDeserializedWithMarshal = plainToClass(StoreContext, storeContextPayload);
+console.log("Store Context with marshal:----------------------------------");
+console.log(storeContextDeserializedWithMarshal.id);
+console.log(storeContextDeserializedWithMarshal.name);
+console.log(storeContextDeserializedWithMarshal.phoneNumber);
+console.log(storeContextDeserializedWithMarshal.longitude);
+console.log(storeContextDeserializedWithMarshal.features?.synchProviderWithQuoteTime?.configuration?.effectiveDurationInMinutes);
+console.log(storeContextDeserializedWithMarshal.features?.synchProviderWithQuoteTime?.isEnable());
+console.log(storeContextDeserializedWithMarshal.features?.synchProviderWithOriginPromiseTime?.isEnable());
