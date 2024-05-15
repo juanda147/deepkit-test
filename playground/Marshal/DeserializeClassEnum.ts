@@ -1,5 +1,36 @@
 import { deserialize } from "@deepkit/type";
-import { Order } from "./Types/Order";
+
+export class PresenceType {
+  public readonly name: string | undefined;
+  static readonly APP_CONNECTED: PresenceType;
+  static readonly APP_DISCONNECTED: PresenceType;
+  static readonly SMS_CONNECTED: PresenceType;
+  static readonly SMS_DISCONNECTED: PresenceType;
+  static readonly PROVIDER_CONNECTED: PresenceType;
+  static readonly PROVIDER_DISCONNECTED: PresenceType;
+  static readonly UNDETERMINED: PresenceType;
+}
+
+class Presence {
+  constructor(public current: PresenceType) {}
+
+  public updatedAt: Date = new Date(Date.now());
+}
+
+class PresenceSignals {
+  ofUserPresence: Presence = new Presence(PresenceType.UNDETERMINED);
+  ofStorePresence: Presence = new Presence(PresenceType.UNDETERMINED);
+}
+
+export class Order {
+  constructor(
+    public readonly storeId: string,
+    public readonly companyId: string,
+    public readonly originOrderId: string,
+    public readonly timezone: string,
+    public presenceSignals: PresenceSignals = new PresenceSignals()
+  ) {}
+}
 
 const orderPayload = {
   storeId: "4c57a370-5c4a-4aa0-938f-539624e7119c",
