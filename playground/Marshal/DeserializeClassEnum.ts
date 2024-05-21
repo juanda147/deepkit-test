@@ -1,21 +1,116 @@
-import { deserialize } from "@deepkit/type";
+import { deserialize, isTypeClassOf } from "@deepkit/type";
+import { ValueObject } from "../DeepKit/abstractions/ValueObject";
+import { serializer } from '@deepkit/type';
 
 export class PresenceType {
-  public readonly name: string | undefined;
-  static readonly APP_CONNECTED: PresenceType;
-  static readonly APP_DISCONNECTED: PresenceType;
-  static readonly SMS_CONNECTED: PresenceType;
-  static readonly SMS_DISCONNECTED: PresenceType;
-  static readonly PROVIDER_CONNECTED: PresenceType;
-  static readonly PROVIDER_DISCONNECTED: PresenceType;
-  static readonly UNDETERMINED: PresenceType;
+  private constructor(
+    /**
+     * The name of the instance; should be exactly the variable name,
+     * for serializing/deserializing simplicity.
+     */
+    public readonly name: string,
+  ) {}
+
+  static readonly APP_CONNECTED = new PresenceType('APP_CONNECTED');
+  static readonly APP_DISCONNECTED = new PresenceType('APP_DISCONNECTED');
+  static readonly SMS_CONNECTED = new PresenceType('SMS_CONNECTED');
+  static readonly SMS_DISCONNECTED = new PresenceType('SMS_DISCONNECTED');
+  static readonly PROVIDER_CONNECTED = new PresenceType('PROVIDER_CONNECTED');
+  static readonly PROVIDER_DISCONNECTED = new PresenceType('PROVIDER_DISCONNECTED');
+  static readonly UNDETERMINED = new PresenceType('UNDETERMINED');
+
+  static get values(): PresenceType[] {
+    return [
+      this.APP_CONNECTED,
+      this.APP_DISCONNECTED,
+      this.SMS_CONNECTED,
+      this.SMS_DISCONNECTED,
+      this.PROVIDER_CONNECTED,
+      this.PROVIDER_DISCONNECTED,
+      this.UNDETERMINED,
+    ];
+  }
+
+  /**
+   * Converts a string to its corresponding Enum instance.
+   *
+   * @param string the string to convert to Enum
+   * @throws RangeError, if a string that has no corressonding Enum value was passed.
+   * @returns the matching Enum
+   */
+  static fromString(string: string): PresenceType {
+    
+    // Works assuming the name property of the enum is identical to the variable's name.
+    const value = this.values.find((v) => v.name === string);
+    if (value) {
+      return value;
+    }
+
+    throw new RangeError(
+      `Illegal argument passed to fromString(): ${string} does not correspond to any instance of the enum ${
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this as any).prototype.constructor.name
+      }`,
+    );
+  }
+
+  //------ Methods ------//
+
+  /**
+   * Called when converting the Enum value to a string using JSON.Stringify.
+   * Compare to the fromString() method, which deserializes the object.
+   */
+  // public toJSON(): string {
+  //   return this.name;
+  // }
+
+  public toString(): string {
+    return this.name;
+  }
+
+  public toLowerCase(): string {
+    return this.name.toLowerCase();
+  }
+
+  public static isUserConnected(value?: PresenceType): boolean {
+    return value != null && (value === this.APP_CONNECTED || value === this.SMS_CONNECTED);
+  }
+
+  public static isProviderConnected(value?: PresenceType): boolean {
+    return value != null && value === this.PROVIDER_CONNECTED;
+  }
 }
 
-class Presence {
-  constructor(public current: PresenceType) {}
+class Presence extends ValueObject<Presence> {
+  constructor(public current: PresenceType) {
+    super();
+  }
 
   public updatedAt: Date = new Date(Date.now());
+
+  /**
+   * Determines whether a given presence status has been received at any point
+   * @param status
+   * @returns true or false
+   */
+  any(status: PresenceType): boolean {
+    return this.current === status || this._history.filter((item) => item.current === status).length > 0;
+  }
+
+  private _history: Array<Presence> = [];
+
+  public get history(): Array<Presence> {
+    return this._history;
+  }
+
+  onLoad(): void {
+    this.current = PresenceType.fromString(this.current.toString());
+  }
 }
+
+serializer.deserializeRegistry.addDecorator(isTypeClassOf(Presence), (_, state) => {
+  state.touch((target: Presence) => target.onLoad());
+});
 
 class PresenceSignals {
   ofUserPresence: Presence = new Presence(PresenceType.UNDETERMINED);
@@ -391,7 +486,15 @@ const orderPayload = {
 
 try {
   const deserializedOrder = deserialize<Order>(orderPayload);
-  console.log(deserializedOrder);
+
+  // const serializaedOrder = serialize<Order>(deserializedOrder);
+  // console.log(serializaedOrder);
+
+  const clone = deserialize<Order>(JSON.parse(JSON.stringify(deserializedOrder)));
+  console.log(clone);
+  console.log(clone._presenceSignals.ofUserPresence.current);
+  console.log(clone._presenceSignals.ofUserPresence.current);
+
 } catch (error) {
   console.log(error);
 }
