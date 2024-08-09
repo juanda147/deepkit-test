@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@deepkit/core": "^1.0.1-alpha.147",
-    "@deepkit/type": "^1.0.1-alpha.149",
+    "@deepkit/type": "^1.0.1-alpha.153",
     "@jest/globals": "^29.7.0",
     "@marcj/marshal": "^2.1.13",
     "google-libphonenumber": "^3.2.34",
@@ -23,7 +23,7 @@
     "ts-jest": "^29.1.2"
   },
   "devDependencies": {
-    "@deepkit/type-compiler": "^1.0.1-alpha.149",
+    "@deepkit/type-compiler": "^1.0.1-alpha.150",
     "@types/google-libphonenumber": "^7.4.30",
     "@types/luxon": "^3.4.2",
     "ts-node": "^10.9.2",
